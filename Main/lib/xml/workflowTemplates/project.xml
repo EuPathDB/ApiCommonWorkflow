@@ -65,6 +65,7 @@
 
     <prop name="maxIntronSize"/>
     <prop name="isNotEbiGenome"/>
+    <prop name="speciesNcbiTaxonId"/>
 
     <step name="${organismAbbrev}_makeDataDir" stepClass="ReFlow::StepClasses::MakeDataDir" groupName="${organismAbbrev}">
       <paramValue name="dataDir">${organismAbbrev}</paramValue>
@@ -99,11 +100,24 @@
       <depends name="initClusterHomeDir"/>
     </step>
 
-    <step name="${organismAbbrev}_loadNcbiTaxonId" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::LoadNcbiTaxonId" groupName="${organismAbbrev}">
-      <paramValue name="ncbiTaxonId">${ncbiTaxonId}</paramValue>
-      <paramValue name="organismFullName">${organismFullName}</paramValue>
+
+    <step name="${organismAbbrev}_loadSpeciesNcbiTaxonId" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::LoadNcbiTaxonId" groupName="${organismAbbrev}">
+      <paramValue name="ncbiTaxonId">${speciesNcbiTaxonId}</paramValue>
+      <paramValue name="parentNcbiTaxonId"></paramValue>
+      <paramValue name="rank">species</paramValue>
+      <paramValue name="organismFullName">NCBI:${speciesNcbiTaxonId}</paramValue>
       <paramValue name="gusConfigFile">${organismAbbrev}/${organismAbbrev}_gus.config</paramValue>
       <depends name="${organismAbbrev}_makeGusConfig"/>
+    </step>
+
+
+    <step name="${organismAbbrev}_loadNcbiTaxonId" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::LoadNcbiTaxonId" groupName="${organismAbbrev}">
+      <paramValue name="ncbiTaxonId">${ncbiTaxonId}</paramValue>
+      <paramValue name="parentNcbiTaxonId">${speciesNcbiTaxonId}</paramValue>
+      <paramValue name="rank">no rank</paramValue>
+      <paramValue name="organismFullName">${organismFullName}</paramValue>
+      <paramValue name="gusConfigFile">${organismAbbrev}/${organismAbbrev}_gus.config</paramValue>
+      <depends name="${organismAbbrev}_loadSpeciesNcbiTaxonId"/>
     </step>
 
     <subgraph name="${organismAbbrev}_LoadGenome" xmlFile="loadGenome.xml" groupName="${organismAbbrev}">

@@ -21,16 +21,23 @@ sub new {
 
     my ($organismId, $nameForFiles, $strainAbbrev, $publicAbbrev, $isFamilyRepresentative, $familyNcbiTaxonIds, $familyNameForFiles) = $workflowStep->runSqlFetchOneRow($test,$sql);
 
-    $sql = "select tn.name, t.ncbi_tax_id, o.taxon_id
+    $sql = "select tn.name, t.ncbi_tax_id, o.taxon_id, t.parent_id as species_taxon_id
             from sres.taxonname tn, sres.taxon t, apidb.organism o
             where o.abbrev = '$organismAbbrev'
               and t.taxon_id = o.taxon_id
               and tn.taxon_id = t.taxon_id
               and tn.name_class = 'scientific name'";
 
-    my ($fullName, $ncbiTaxonId, $taxonId) = $workflowStep->runSqlFetchOneRow($test,$sql);
+    my ($fullName, $ncbiTaxonId, $taxonId, $speciesTaxonId) = $workflowStep->runSqlFetchOneRow($test,$sql);
 
     die "Could not find taxon_id for organismAbbrev '$organismAbbrev'" unless $taxonId;
+
+    $sql = "select ncbi_tax_id, rank from sres.taxon where taxon_id = $speciesTaxonId";
+
+    my ($speciesNcbiTaxonId, $speciesRank) = $workflowStep->runSqlFetchOneRow($test,$sql);
+
+    die "Could not find species taxon_id for organismAbbrev '$organismAbbrev'" unless $speciesNcbiTaxonId;
+    die "Parent of $organismAbbrev expected rank of $species" unless($rank eq 'species');
 
     $self->{fullName} = $fullName;
     $self->{nameForFiles} = $nameForFiles;
@@ -42,7 +49,8 @@ sub new {
     $self->{isFamilyRepresentative} = $isFamilyRepresentative;
     $self->{familyNcbiTaxonIds} = $familyNcbiTaxonIds;
     $self->{familyNameForFiles} = $familyNameForFiles;
-
+    $self->{speciesNcbiTaxonId} = $speciesNcbiTaxonId;
+    $self->{speciesTaxonId} = $speciesTaxonId;
     return $self;
 }
 
@@ -77,6 +85,19 @@ sub getSpeciesNameForFiles {
     $speciesNameForFiles =~ s/$self->{strainAbbrev}$//;
     return $speciesNameForFiles;
 }
+
+sub getSpeciesNcbiTaxonId {
+    my ($self) = @_;
+    return "$self->{organismAbbrev}_SPECIES_NCBI_TAXON_ID" if $self->{test};
+    return $self->{speciesNcbiTaxonId};
+}
+
+sub getSpeciesTaxonId {
+    my ($self) = @_;
+    return "$self->{organismAbbrev}_SPECIES_TAXON_ID" if $self->{test};
+    return $self->{speciesTaxonId};
+}
+
 sub getOrganismId {
     my ($self) = @_;
     return "$self->{organismAbbrev}_ORGANISM_ID" if $self->{test};

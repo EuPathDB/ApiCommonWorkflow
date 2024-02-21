@@ -11,8 +11,15 @@ sub run {
 
   my $organismFullName = $self->getParamValue('organismFullName');
   my $ncbiTaxonId = $self->getParamValue('ncbiTaxonId');
+  my $speciesNcbiTaxonId = $self->getParamValue('speciesNcbiTaxonId');
+  my $rank = $self->getParamValue('rank');
 
-  my $args = "--ncbiTaxId $ncbiTaxonId --rank 'no rank' --name '$organismFullName' --mode insert";
+  my $parentNcbiTaxId;
+  if($speciesNcbiTaxonId) {
+    $parentNcbiTaxId = "--parentNcbiTaxId $speciesNcbiTaxonId";
+  }
+
+  my $args = "--ncbiTaxId $ncbiTaxonId --rank '${rank}' $parentNcbiTaxId --name '$organismFullName' --mode insert";
 
   $self->runPlugin($test, $undo, "GUS::Supported::Plugin::InsertTaxonAndTaxonName", $args);
 
