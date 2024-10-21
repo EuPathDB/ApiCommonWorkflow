@@ -28,6 +28,10 @@ sub run {
 
   my $args = "--data_file $workflowDataDir/$inputFile --scanDbName '$tRNAExtDbName' --scanDbVer '$tRNAExtDbVersion' --genomeDbName '$genomeExtDbName' --genomeDbVer '$genomeExtDbVersion' --soExternalDatabaseSpec '$soExtDbName|$soVersion' --prefix '$organismAbbrev'";
 
+  my $projectName = $self->getParamValue('projectName');
+  my $soGusConfigFile = $projectName. "_gus.config";
+  $args .= " --soGusConfigFile $workflowDataDir/$soGusConfigFile" if ($soGusConfigFile);
+
   $self->testInputFile('inputFile', "$workflowDataDir/$inputFile");
 
 

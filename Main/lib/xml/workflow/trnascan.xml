@@ -42,6 +42,7 @@
     <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
     <paramValue name="tRNAExtDbRlsSpec">$$organismAbbrev$$TRNAscan-SE|1.3</paramValue>
     <paramValue name="organismAbbrev">$$organismAbbrev$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
     <depends name="runNextflowOnCluster"/>
   </step>
 
