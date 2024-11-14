@@ -267,6 +267,32 @@
     </subgraph>
   </datasetTemplate> -->
 
+
+  <datasetTemplate class="miscGFFToWebService">
+    <prop name="projectName"/>
+    <prop name="organismAbbrev"/>
+    <prop name="name"/>
+    <prop name="version"/>
+    <prop name="copyGFFOnly"/>
+
+    <subgraph name="${name}_miscGFFToWebService" xmlFile="loadDataset.xml">
+      <paramValue name="datasetName">${organismAbbrev}_${name}_miscGFFToWebService_RSRC</paramValue>
+      <paramValue name="gusConfigFile">$$gusConfigFile$$</paramValue>
+      <paramValue name="datasetLoaderXmlFileName">$$organismDatasetLoaderXmlFile$$</paramValue>
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    </subgraph>
+
+    <step name="${name}_miscGFFToWebService_copyGFF3ToWebServiceDir" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyGFF3ToWebServiceDir">
+      <paramValue name="gusConfigFile">$$gusConfigFile$$</paramValue>
+      <paramValue name="gff3File">$$dataDir$$/${organismAbbrev}_${name}_miscGFFToWebService_RSRC/final/${organismAbbrev}_${name}.gff</paramValue>
+      <paramValue name="organismAbbrev">${organismAbbrev}</paramValue>
+      <paramValue name="relativeDir">$$relativeWebServicesDir$$</paramValue>
+      <paramValue name="experimentDatasetName">${name}</paramValue>
+      <paramValue name="copyGFFOnly">${copyGFFOnly}</paramValue>
+      <depends name="${name}_miscGFFToWebService"/>
+    </step>
+
+  </datasetTemplate>
 </workflowGraph>
 
 

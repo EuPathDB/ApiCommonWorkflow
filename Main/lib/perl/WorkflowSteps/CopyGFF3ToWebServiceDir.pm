@@ -39,7 +39,7 @@ sub run {
   } else {
     $self->runCmd($test, $cmd_mkdir);
     $self->runCmd($test, $cmd_copy);
-    $self->runCmd($test, "cp $workflowDataDir/$gff3File.tbi $copyToDir");
+    $self->runCmd($test, "cp $workflowDataDir/$gff3File.tbi $copyToDir") unless($self->getParamValue('copyGFFOnly') =~ /true/i);
   }
 
 }
